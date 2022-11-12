@@ -26,9 +26,8 @@ class Router {
         this.app.post('/boardlist', (req, res) =>{
             let body = req.body;
             let token = body.token;
-            let page = body.page; //0부터 시작
-            let range = [page*5, page*5+4];
-            let boards = this.db.getBoards(range);
+
+            let boards = this.db.getBoards();
 
             res.json({"boards": boards});
         })

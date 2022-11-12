@@ -14,14 +14,14 @@ class Database {
         return this.boards[id];
     }
 
-    getBoards(range){
-        let start = range[0];
-        let end = range[1];
-        let res = [];
-        for(let i=start;i<=end;i++){
-            res.push(Object.values(this.boards)[i].getJSONData());
+    getBoards(){
+        let ret = [];
+        for(let boardId in this.boards){
+            let board = this.boards[boardId];
+            if(! board.isSolved())
+                ret.push(board);
         }
-        return res;
+        return ret;
     }
 
     matchUser(email, password) {

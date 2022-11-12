@@ -3,6 +3,7 @@ class SolveQueueHandler{
     constructor(clientManager) {
         this.solvequeue = {};
         this.clientManager = clientManager;
+        setInterval(this.check.bind(this), 1000);
     }
     add(board){
         this.solvequeue[board.notifyTime] = board;
@@ -15,6 +16,7 @@ class SolveQueueHandler{
             if(format === board.notifyTime){
                 let author = board.author;
                 let client = this.clientManager.getClientByUsername(author);
+                board.solved = true;
                 delete this.solvequeue[board.notifyTime];
             }
         }

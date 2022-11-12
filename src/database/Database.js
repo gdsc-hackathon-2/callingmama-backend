@@ -1,71 +1,66 @@
 const crypto = require('crypto');
+const mysql = require('sync-mysql');
 
 class Database {
     constructor() {
         this.users = {}
         this.boards = {}
+        this.connection = new mysql({
+            host: 'server.cla6sha.de',
+            user: 'mmsg',
+            password: 'msg123!@#',
+            database: 'mmsgdb'
+        });
     }
 
-    makeBoard(board){
+    makeBoard(board) {
         this.boards[board.id] = board;
     }
 
-    getBoard(id){
+    getBoard(id) {
         return this.boards[id];
     }
 
-    getBoards(){
+    getBoards() {
         let ret = [];
-        for(let boardId in this.boards){
+        for (let boardId in this.boards) {
             let board = this.boards[boardId];
-            if(! board.isSolved())
+            if (!board.isSolved())
                 ret.push(board);
         }
         return ret;
     }
 
     matchUser(email, password) {
-        for (let userId in this.users) {
-            let user = this.users[userId];
-            if (user.email === email) {
-                if (user.password === password) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        let res = this.connection.query("select password from users where email='" + email + "'");
+        return res[0].password === password;
     }
 
     register(email, username, password) {
         let id = crypto.randomBytes(32).toString('base64').slice(0, 32);
-        this.users[id] = {id: id, email: email, username: username, password: password};
+        this.connection.query("insert into users values(" +
+            id + "," +
+            username + "," +
+            password + "," +
+            email +
+            ")");
     }
 
     getClientInfo(email) {
-        for (let userId in this.users) {
-            if (this.users[userId].email === email) {
-                return this.users[userId];
-            }
-        }
+        let res = this.connection.query("select * from users where email='" + email + "'");
+        if (res.length > 0)
+            return res[0];
         return null;
     }
 
     isValidUsername(username) {
-        for (let userId in this.users) {
-            if (this.users[userId].username === username) {
-                return false;
-            }
-        }
-        return true;
+        let res = this.connection.query("select * from users where username='" + username + "'");
+        return res.length === 0;
     }
 
     isValidEmail(email) {
-        for (let userId in this.users) {
-            if (this.users[userId].email === email) {
-                return false;
-            }
-        }
-        return true;
+        let res = this.connection.query("select * from users where email='" + email + "'");
+        return res.length === 0;
     }
 }
 

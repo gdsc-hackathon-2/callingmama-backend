@@ -11,6 +11,7 @@ class Board{
     }
     getJSONData(){
         return {
+            id: this.id,
             author: this.author,
             title: this.title,
             content: this.content,

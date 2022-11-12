@@ -20,6 +20,16 @@ class Database {
         return this.boards[id];
     }
 
+    getBoardByAuthor(username){
+        let ret = [];
+        for(let board in this.boards){
+            if(board.getAuthor() === username){
+                ret.push(board);
+            }
+        }
+        return ret;
+    }
+
     getBoards() {
         let ret = [];
         for (let boardId in this.boards) {

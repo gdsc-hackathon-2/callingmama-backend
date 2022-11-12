@@ -18,7 +18,7 @@ class Router {
     }
 
     init() {
-        this.app.post('/solve', (req, res)=>{
+        this.app.post('/solve', (req, res) => {
             let body = req.body;
             let token = body.token;
             let boardId = body.boardId;
@@ -29,7 +29,7 @@ class Router {
             this.solveQueueHandler.add(board, content);
         });
 
-        this.app.post('/boards', (req, res) =>{
+        this.app.get('/boards', (req, res) => {
             let body = req.body;
             let token = body.token;
 

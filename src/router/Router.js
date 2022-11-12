@@ -23,10 +23,12 @@ class Router {
             let token = body.token;
             let boardId = body.boardId;
             let board = this.db.boards[boardId];
+            let content = body.content;
 
-            this.solveQueueHandler.add(board);
-
+            res.status(200).json({result: "success"});
+            this.solveQueueHandler.add(board, content);
         });
+
         this.app.post('/boards', (req, res) =>{
             let body = req.body;
             let token = body.token;
@@ -35,6 +37,7 @@ class Router {
 
             res.json({"boards": boards});
         })
+
         this.app.post('/newboard', (req, res) => {
             let body = req.body;
             let token = body.token;
@@ -50,7 +53,9 @@ class Router {
                 res.status(BOARD_ERROR).json({result: "error"});
                 return;
             }
-            let board = new Board(this.clientManager.clients[token].username, title, content, notifyTime, false);
+            let client = this.clientManager.clients[token];
+            let board = new Board(client.username, title, content, notifyTime, false);
+            res.status(200).json({result: "success", boardId: board.id});
             this.db.makeBoard(board);
         })
 
@@ -58,7 +63,7 @@ class Router {
             let body = req.body;
             let result = this.register(body);
             if (result) { // 가입 성공
-                let token = this.clientManager.login(body.email, req.socket.remoteAddress); //가입 성공시 로그인하도록.
+                let token = this.clientManager.login(body.email, req.socket.remoteAddress, body.port); //가입 성공시 로그인하도록.
                 res.status(200).json({result: "success", token: token});
             } else {
                 res.status(REGISTER_ERROR).json({result: "error"});

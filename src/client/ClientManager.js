@@ -8,11 +8,11 @@ class ClientManager {
         this.db = database;
     }
 
-    login(email, address) {
+    login(email, address, port) {
         let token = crypto.randomBytes(32).toString('base64').slice(0, 32);
         let clientInfo = this.db.getClientInfo(email);
 
-        this.clients[token] = new Client(token, clientInfo.email, clientInfo.username, address);
+        this.clients[token] = new Client(token, clientInfo.email, clientInfo.username, address, port);
         return token;
     }
     getClientByUsername(username){

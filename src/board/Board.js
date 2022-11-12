@@ -17,9 +17,6 @@ class Board{
             notifyTime: this.notifyTime
         };
     }
-    getTimeStamp(){
-        return this.timestamp;
-    }
     solve(){
         this.solved = true;
     }

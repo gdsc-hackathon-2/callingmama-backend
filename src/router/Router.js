@@ -5,6 +5,7 @@ const BOARD_ERROR = 513;
 const crypto = require('crypto');
 const Client = require('../client/Client.js');
 const Board = require('../board/Board.js');
+const SolveQueueHandler = require('../board/SolveQueueHandler.js');
 
 class Router {
     constructor(app, clientManager, database) {
@@ -13,6 +14,7 @@ class Router {
         this.clientManager = clientManager;
 
         this.sessions = {};
+        this.solveQueueHandler = new SolveQueueHandler(clientManager);
     }
 
     init() {
@@ -22,8 +24,10 @@ class Router {
             let boardId = body.boardId;
             let board = this.db.boards[boardId];
 
+            this.solveQueueHandler.add(board);
+
         });
-        this.app.post('/boardlist', (req, res) =>{
+        this.app.post('/boards', (req, res) =>{
             let body = req.body;
             let token = body.token;
 

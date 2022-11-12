@@ -11,3 +11,6 @@ app.use(bodyParser.json());
 let clientManager = new ClientManager();
 let database = new Database();
 let router = new Router(app, clientManager, database);
+router.init();
+
+app.listen(8080);

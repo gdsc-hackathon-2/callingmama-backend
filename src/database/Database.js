@@ -4,6 +4,17 @@ class Database {
         this.users = {}
         this.poasts = {}
     }
+    matchUser(email, password){
+        for(let userId in this.users){
+            let user = this.users[userId];
+            if(user.email === email){
+                if(user.password === password){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     register(email, username, password){
         let id = crypto.randomBytes(32).toString('base64').slice(0,32);
         this.users[id] = {id: id, email: email, username: username, password: password};

@@ -1,20 +1,13 @@
 require('date-utils');
 const crypto = require("crypto");
 class Board{
-    constructor(author, title, content, notifyTime, solved, id=""){
+    constructor(author, title, content, notifyTime, solved){
         this.author = author;
         this.title = title;
         this.content = content;
         this.notifyTime = notifyTime;
         this.solved = solved;
-        if(id===""){
-            this.id = crypto.randomBytes(32).toString('base64').slice(0, 32);
-        } else {
-            this.id = id;
-        }
-    }
-    static fromData(jsondata){
-        return new Board(jsondata.author, jsondata.title, jsondata.content, jsondata.notifyTime, jsondata.solved, jsondata.id);
+        this.id = crypto.randomBytes(32).toString('base64').slice(0, 32);
     }
     getJSONData(){
         return {

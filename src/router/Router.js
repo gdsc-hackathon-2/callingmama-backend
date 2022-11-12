@@ -55,6 +55,7 @@ class Router {
             }
             let client = this.clientManager.clients[token];
             let board = new Board(client.username, title, content, notifyTime, false);
+            console.log(board);
             res.status(200).json({result: "success", boardId: board.id});
             this.db.makeBoard(board);
         })
@@ -74,12 +75,13 @@ class Router {
             let body = req.body;
             let email = body.email
             let password = body.password;
+            let port = body.port;
             if (!email || !password) {
                 res.status(LOGIN_ERROR).json({result: "error"});
                 return;
             }
             if (this.db.matchUser(email, password)) {
-                let token = this.clientManager.login(email, req.socket.remoteAddress);
+                let token = this.clientManager.login(email, req.socket.remoteAddress, port);
                 res.status(200).json({result: "success", token: token});
             } else {
                 res.status(LOGIN_ERROR).json({result: "error"});

@@ -9,7 +9,7 @@ class SolveQueueHandler {
 
     add(board, content) {
         board.toSend = content;
-        this.solvequeue[board.id] = board;
+        this.solvequeue[board.getId()] = board;
     }
 
     check() {
@@ -21,7 +21,7 @@ class SolveQueueHandler {
             let targetTime = this.formatToTimestamp(board.notifyTime);
 
             if(time > targetTime){
-                board.solved = false;
+                board.solved = true;
                 delete this.solvequeue[board.id];
                 continue;
             }

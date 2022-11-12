@@ -8,8 +8,8 @@ const Database = require('./database/Database');
 
 app.use(bodyParser.json());
 
-let clientManager = new ClientManager();
 let database = new Database();
+let clientManager = new ClientManager(database);
 let router = new Router(app, clientManager, database);
 router.init();
 

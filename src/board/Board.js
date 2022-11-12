@@ -8,14 +8,12 @@ class Board{
         this.notifyTime = notifyTime;
         this.solved = solved;
         this.id = crypto.randomBytes(32).toString('base64').slice(0, 32);
-        this.timestamp = Date.now();
     }
     getJSONData(){
         return {
             author: this.author,
             title: this.title,
             content: this.content,
-            timestamp: this.timestamp,
             notifyTime: this.notifyTime
         };
     }

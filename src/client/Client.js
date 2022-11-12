@@ -8,9 +8,11 @@ class Client {
         this.username = username;
         this.address = address;
     }
+    solve(content){
+        this.request({content: content});
+    }
     request(params){
         axios.post(this.address, params).then(r => {
-
         });
     }
 }

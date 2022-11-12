@@ -9,8 +9,19 @@ class Database {
     makeBoard(board){
         this.boards[board.id] = board;
     }
-    getBoards(){
-        return this.boards;
+
+    getBoard(id){
+        return this.boards[id];
+    }
+
+    getBoards(range){
+        let start = range[0];
+        let end = range[1];
+        let res = [];
+        for(let i=start;i<=end;i++){
+            res.push(Object.values(this.boards)[i].getJSONData());
+        }
+        return res;
     }
 
     matchUser(email, password) {

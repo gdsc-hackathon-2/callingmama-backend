@@ -20,6 +20,7 @@ class Router {
             let body = req.body;
             let token = body.token;
             let boardId = body.boardId;
+            let board = this.db.boards[boardId];
 
         });
         this.app.post('/boardlist', (req, res) =>{
@@ -27,10 +28,9 @@ class Router {
             let token = body.token;
             let page = body.page; //0부터 시작
             let range = [page*5, page*5+4];
-            let allBoards = this.db.getBoards();
-            for (let boardId in allBoards){
+            let boards = this.db.getBoards(range);
 
-            }
+            res.json({"boards": boards});
         })
         this.app.post('/newboard', (req, res) => {
             let body = req.body;
@@ -43,12 +43,11 @@ class Router {
             let title = body.title;
             let content = body.content;
             let notifyTime = body.notifyTime;
-            let minute = notifyTime * 60 * 1000;
             if (!title || !content) {
                 res.status(BOARD_ERROR).json({result: "error"});
                 return;
             }
-            let board = new Board(this.clientManager.clients[token].username, title, content, minute, false);
+            let board = new Board(this.clientManager.clients[token].username, title, content, notifyTime, false);
             this.db.makeBoard(board);
         })
 

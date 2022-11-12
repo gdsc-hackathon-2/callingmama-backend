@@ -15,6 +15,15 @@ class ClientManager {
         this.clients[token] = new Client(token, clientInfo.email, clientInfo.username, address);
         return token;
     }
+    getClientByUsername(username){
+        for(let clientId in this.clients){
+            let client = this.clients[clientId];
+            if(client.username === username){
+                return client;
+            }
+        }
+        return null;
+    }
 
     isLoggedIn(token) {
         return !token || typeof this.clients[token] !== "undefined";

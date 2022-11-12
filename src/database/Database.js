@@ -3,7 +3,6 @@ const mysql = require('sync-mysql');
 
 class Database {
     constructor() {
-        this.users = {}
         this.boards = {}
         this.connection = new mysql({
             host: 'server.cla6sha.de',
@@ -38,12 +37,13 @@ class Database {
 
     register(email, username, password) {
         let id = crypto.randomBytes(32).toString('base64').slice(0, 32);
-        this.connection.query("insert into users values(" +
-            id + "," +
-            username + "," +
-            password + "," +
-            email +
-            ")");
+        let sql = "insert into users values('" +
+            id + "', '" +
+            username + "', '" +
+            password + "', '" +
+            email +"'" +
+            ")";
+        this.connection.query(sql);
     }
 
     getClientInfo(email) {

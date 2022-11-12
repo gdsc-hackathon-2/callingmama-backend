@@ -1,16 +1,17 @@
-class Client {
-    constructor(clientHandler, username, email) {
-        this.clientHandler = clientHandler;
-        this.username = username;
-        this.email = email;
-    }
+const PORT = 8080;
+const axios = require('axios');
 
-    getEmail() {
-        return this.email;
+class Client {
+    constructor(token, email, username, address) {
+        this.token = token;
+        this.email = email;
+        this.username = username;
+        this.address = address;
     }
-    getUsername(){
-        return this.username;
+    request(params){
+        axios.post(this.address, params).then(r => {
+
+        });
     }
 }
-
 module.exports = Client;

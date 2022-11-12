@@ -1,81 +1,98 @@
 const REGISTER_ERROR = 511;
 const LOGIN_ERROR = 512;
-const POST_ERROR = 513;
+const BOARD_ERROR = 513;
 
 const crypto = require('crypto');
+const Client = require('../client/Client.js');
+const Board = require('../board/Board.js');
 
 class Router {
-    constructor(app, clientHandler, database) {
+    constructor(app, clientManager, database) {
         this.app = app;
         this.db = database;
-        this.clientHandler = clientHandler;
+        this.clientManager = clientManager;
 
         this.sessions = {};
     }
-    init(){
-        this.app.post('/addpost', (req, res) => {
+
+    init() {
+        this.app.post('/solve', (req, res)=>{
             let body = req.body;
             let token = body.token;
-            if(! this.isLoggedIn(token)){
-                // 이미 로그인했을떄
-                res.status(POST_ERROR).json({result: "error"});
-                return;
-            }
-            if(! this.isLoggedIn()){
+            let boardId = body.boardId;
+
+        });
+        this.app.post('/boardlist', (req, res) =>{
+            let body = req.body;
+            let token = body.token;
+            let page = body.page; //0부터 시작
+            let range = [page*5, page*5+4];
+            let allBoards = this.db.getBoards();
+            for (let boardId in allBoards){
 
             }
         })
+        this.app.post('/newboard', (req, res) => {
+            let body = req.body;
+            let token = body.token;
+            if (!this.clientManager.isLoggedIn(token)) {
+                // 로그인되어있지 않을 때
+                res.status(BOARD_ERROR).json({result: "error"});
+                return;
+            }
+            let title = body.title;
+            let content = body.content;
+            let notifyTime = body.notifyTime;
+            let minute = notifyTime * 60 * 1000;
+            if (!title || !content) {
+                res.status(BOARD_ERROR).json({result: "error"});
+                return;
+            }
+            let board = new Board(this.clientManager.clients[token].username, title, content, minute, false);
+            this.db.makeBoard(board);
+        })
 
-        this.app.post('/register', (req, res) =>{
+        this.app.post('/register', (req, res) => {
             let body = req.body;
             let result = this.register(body);
-            if(result){ // 가입 성공
-                let token = this.login(body.username); //가입 성공시 로그인하도록.
+            if (result) { // 가입 성공
+                let token = this.clientManager.login(body.email, req.socket.remoteAddress); //가입 성공시 로그인하도록.
                 res.status(200).json({result: "success", token: token});
             } else {
                 res.status(REGISTER_ERROR).json({result: "error"});
             }
         });
 
-        this.app.post('/login', (req, res) => {
+        this.app.post('/login', (req, res) => { //email, password로 로그인
             let body = req.body;
-            let username = body.username;
+            let email = body.email
             let password = body.password;
-            if(! username || ! password){
+            if (!email || !password) {
                 res.status(LOGIN_ERROR).json({result: "error"});
                 return;
             }
-            if(this.db.matchUser(username, password)){
-                let token = this.login(username);
-                res.status(200).json({result:"success", token: token});
+            if (this.db.matchUser(email, password)) {
+                let token = this.clientManager.login(email, req.socket.remoteAddress);
+                res.status(200).json({result: "success", token: token});
             } else {
                 res.status(LOGIN_ERROR).json({result: "error"});
             }
         })
     }
-    // 성공했을경우
-    register(body){
+
+    register(body) {
         let email = body.email;
         let password = body.password;
         let username = body.username;
-        if(! email || ! password || !username){
+        if (!email || !password || !username) {
             return false;
         }
-        if(! this.db.isValidEmail(email) || !this.db.isValidUsername(username)){
+        if (!this.db.isValidEmail(email) || !this.db.isValidUsername(username)) {
             return false;
         }
         this.db.register(email, username, password);
         return true;
     }
-
-    login(username){
-        let token = crypto.randomBytes(32).toString('base64').slice(0,32);
-        this.sessions[token] = username;
-        return token;
-    }
-
-    isLoggedIn(token){
-        return typeof this.sessions[token] !== "undefined";
-    }
 }
+
 module.exports = Router;
